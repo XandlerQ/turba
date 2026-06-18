@@ -1,0 +1,92 @@
+[gd_scene load_steps=17 format=3 uid="uid://ojde87i0f4qw"]
+
+[ext_resource type="Script" uid="uid://cvvbgbruhef4o" path="res://scenes/entity/agent/agent.gd" id="1_h7oaa"]
+[ext_resource type="Texture2D" uid="uid://d2gmbmaajxdsk" path="res://ext/sprites/entities/agent.png" id="1_oafas"]
+[ext_resource type="Script" uid="uid://ox0hh16v4rcr" path="res://scenes/entity/components/locomotion/c_entity_locomotion.gd" id="2_ff518"]
+[ext_resource type="Script" uid="uid://dl16qj2pekugr" path="res://scenes/entity/components/locomotion/fsml_entity_locomotion.gd" id="3_idvy5"]
+[ext_resource type="Script" uid="uid://blafo7rasg83s" path="res://scenes/entity/components/locomotion/states/st_entity_locomotion_idle.gd" id="4_wl74y"]
+[ext_resource type="Script" uid="uid://cl6y2exn7ahi" path="res://scenes/entity/components/locomotion/states/st_entity_locomotion_walk.gd" id="5_t8sfs"]
+[ext_resource type="Script" uid="uid://brfaps2efycsi" path="res://scenes/entity/components/rotation/c_entity_rotation.gd" id="6_xhu34"]
+[ext_resource type="Script" uid="uid://bnn7it6454xl1" path="res://scenes/entity/components/rotation/fsml_entity_rotation.gd" id="7_obe68"]
+[ext_resource type="Script" uid="uid://c0fsfuyx3jtxp" path="res://scenes/entity/components/rotation/sates/st_entity_rotation_direct.gd" id="8_6txjt"]
+[ext_resource type="Script" uid="uid://1bahjqramppb" path="res://scenes/entity/components/behavior/c_entity_behavior.gd" id="9_6txjt"]
+[ext_resource type="Script" uid="uid://bx3ecvn5x7iva" path="res://scenes/entity/components/behavior/fsml_entity_behavior.gd" id="10_1qkib"]
+[ext_resource type="Script" uid="uid://dhw6pfop1a65a" path="res://scenes/entity/components/behavior/states/st_entity_behavior_idle.gd" id="11_1qkib"]
+[ext_resource type="Script" uid="uid://ch2ehoniicj5r" path="res://scenes/entity/components/behavior/states/st_entity_behavior_rndmove.gd" id="12_p4nl0"]
+[ext_resource type="Script" uid="uid://did08o740c3p" path="res://scenes/entity/agent/components/sensing/c_agent_sensing.gd" id="14_cir1k"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7trm4"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cir1k"]
+radius = 100.0
+
+[node name="Agent" type="CharacterBody2D"]
+script = ExtResource("1_h7oaa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_7trm4")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_oafas")
+
+[node name="LocomotionComponent" type="Node" parent="." node_paths=PackedStringArray("object", "fsml")]
+script = ExtResource("2_ff518")
+object = NodePath("..")
+fsml = NodePath("LocomotionFSML")
+
+[node name="LocomotionFSML" type="Node" parent="LocomotionComponent" node_paths=PackedStringArray("initialState")]
+script = ExtResource("3_idvy5")
+initialState = NodePath("Walk")
+
+[node name="Idle" type="Node" parent="LocomotionComponent/LocomotionFSML" node_paths=PackedStringArray("object")]
+script = ExtResource("4_wl74y")
+object = NodePath("../..")
+
+[node name="Walk" type="Node" parent="LocomotionComponent/LocomotionFSML" node_paths=PackedStringArray("object")]
+script = ExtResource("5_t8sfs")
+object = NodePath("../..")
+
+[node name="RotationComponent" type="Node" parent="." node_paths=PackedStringArray("object", "fsml")]
+script = ExtResource("6_xhu34")
+object = NodePath("..")
+fsml = NodePath("RotationFSML")
+
+[node name="RotationFSML" type="Node" parent="RotationComponent" node_paths=PackedStringArray("initialState")]
+script = ExtResource("7_obe68")
+initialState = NodePath("Direct")
+
+[node name="Direct" type="Node" parent="RotationComponent/RotationFSML" node_paths=PackedStringArray("director", "object")]
+script = ExtResource("8_6txjt")
+director = NodePath("../../../LocomotionComponent")
+object = NodePath("../..")
+
+[node name="BehaviorComponent" type="Node" parent="." node_paths=PackedStringArray("object", "fsml", "locomotionComponent")]
+script = ExtResource("9_6txjt")
+object = NodePath("..")
+fsml = NodePath("BehaviorFSML")
+locomotionComponent = NodePath("../LocomotionComponent")
+
+[node name="BehaviorFSML" type="Node" parent="BehaviorComponent" node_paths=PackedStringArray("initialState")]
+script = ExtResource("10_1qkib")
+initialState = NodePath("RNDMove")
+
+[node name="Idle" type="Node" parent="BehaviorComponent/BehaviorFSML" node_paths=PackedStringArray("object")]
+script = ExtResource("11_1qkib")
+object = NodePath("../..")
+
+[node name="RNDMove" type="Node" parent="BehaviorComponent/BehaviorFSML" node_paths=PackedStringArray("object")]
+script = ExtResource("12_p4nl0")
+fluct = 0.05
+object = NodePath("../..")
+
+[node name="SensingComponent" type="Node2D" parent="." node_paths=PackedStringArray("ownerAgent", "visionArea")]
+script = ExtResource("14_cir1k")
+ownerAgent = NodePath("..")
+visionArea = NodePath("VisionArea")
+
+[node name="VisionArea" type="Area2D" parent="SensingComponent"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SensingComponent/VisionArea"]
+shape = SubResource("CircleShape2D_cir1k")

@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=4 uid="uid://dyqkap0xwyxcy"]
+
+[ext_resource type="Texture2D" uid="uid://coges3cfkgfds" path="res://ext/sprites/tiles/tech/grid_1m_blue.png" id="1_1mgh8"]
+[ext_resource type="PackedScene" uid="uid://ojde87i0f4qw" path="res://scenes/entity/agent/agent.tscn" id="2_8a5hx"]
+[ext_resource type="Texture2D" uid="uid://lleijxmcxrex" path="res://ext/sprites/tiles/tech/grid_1m_orange.png" id="3_0huwb"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uyg78"]
+texture = ExtResource("3_0huwb")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[sub_resource type="TileSet" id="TileSet_eulud"]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_uyg78")
+
+[node name="TestWorld" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_repeat = 2
+texture = ExtResource("1_1mgh8")
+region_enabled = true
+region_rect = Rect2(0, 0, 3072, 3072)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Agent1" parent="." instance=ExtResource("2_8a5hx")]
+position = Vector2(-116, -41)
+
+[node name="Agent2" parent="." instance=ExtResource("2_8a5hx")]
+position = Vector2(73, 44)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD9//3/AAAAAAAAAAD+//3/AAAAAAAAAAD///3/AAAAAAAAAAAAAP3/AAAAAAAAAAABAP3/AAAAAAAAAAACAP3/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAACAAIAAAAAAAAAAAABAAIAAAAAAAAAAAAAAAIAAAAAAAAAAAD//wIAAAAAAAAAAAD+/wIAAAAAAAAAAAD9/wIAAAAAAAAAAAD8/wIAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wAAAAAAAAAAAAD7////AAAAAAAAAAD7//7/AAAAAAAAAAD7//3/AAAAAAAAAAD8//3/AAAAAAAAAAA=")
+tile_set = SubResource("TileSet_eulud")
